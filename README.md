@@ -23,6 +23,12 @@ This has been a horrible waste of my time, and I wish you luck in yours.
 
 If there isn't an asterisk, try re-opening the game again. If it still doesn't show up, contact me on Discord at `@gristCollector#8688`.
 
+## In-game Screenshots
+
+![In-game Screenshot 1](readme_assets/ingame_sc1.jpg)
+![In-game Screenshot 2](readme_assets/ingame_sc2.jpg)
+![In-game Screenshot 3](readme_assets/ingame_sc3.jpg)
+
 ## Changelogs
 
 **0.0.1** : Initial Release for testing
