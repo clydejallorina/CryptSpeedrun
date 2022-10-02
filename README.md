@@ -8,7 +8,7 @@ This has been a horrible waste of my time, and I wish you luck in yours.
 
 ## Installation Instructions
 
-1. Download the appropriate zip folder for your OS in Releases.
+1. Download the appropriate zip folder for your OS in [Releases](https://github.com/clydejallorina/CryptSpeedrun/releases).
 2. Figure out where Crypt is installed on your PC. This is done by right-clicking Crypt in the Steam library, hovering over `Manage`, and then clicking `Browse Local Files`.
 
 ![Steam Interface](readme_assets/steam_local_files.png)
