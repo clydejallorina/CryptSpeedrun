@@ -39,6 +39,7 @@ If there isn't an asterisk, try re-opening the game again. If it still doesn't s
 ## Changelogs
 
 **0.0.2** : Updated timings to start from level load, prototype autosplitter for LiveSplit
+
 **0.0.1** : Initial Release for testing
 
 ## Mod Development Instructions
