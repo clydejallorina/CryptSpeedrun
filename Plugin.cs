@@ -29,12 +29,23 @@ namespace CryptSpeedrun
             private static TextMeshProUGUI stopwatchText = null;
             private static BepInEx.Logging.ManualLogSource LogSource = BepInEx.Logging.Logger.CreateLogSource("StopwatchHUD");
 
-            [HarmonyPatch(typeof(OpenSpawn), "OpenDoor")]
-            [HarmonyPostfix]
-            public static void Postfix()
+            private static string TimeToString()
             {
-                LogSource.LogInfo("Door opened!");
-                isStarted = true;
+                int minutes = (int)time / 60;
+                int seconds = (int)time % 60;
+                int milliseconds = (int)(time * 1000) % 1000;
+                return $"{minutes:d02}:{seconds:d02}.{milliseconds:d03}";
+            }
+
+            [HarmonyPatch(typeof(DeadWinUI), "Start")]
+            [HarmonyPostfix]
+            public static void ShowFinalTime()
+            {
+                LogSource.LogInfo("Adding final time to end text...");
+                Canvas cv = GameObject.FindObjectOfType<Canvas>();
+                TextMeshProUGUI text = cv.GetComponentInChildren<TextMeshProUGUI>();
+                text.text += "\n\nFinal Time: " + TimeToString();
+                LogSource.LogInfo("Succesfully added time to end text!");
             }
 
             [HarmonyPatch(typeof(Movement), "FixedUpdate")]
@@ -43,16 +54,14 @@ namespace CryptSpeedrun
             {
                 if (!isStarted || stopwatchText == null) return;
                 if (!Globals.isPaused) time += Time.fixedDeltaTime;
-                int minutes = (int)time / 60;
-                int seconds = (int)time % 60;
-                int milliseconds = (int)(time * 1000) % 1000;
-                stopwatchText.text = $"{minutes:d02}:{seconds:d02}.{milliseconds:d03}";
+                stopwatchText.text = TimeToString();
             }
 
             [HarmonyPatch(typeof(UIManager), "Awake")]
             [HarmonyPostfix]
             public static void AddStopwatch(UIManager __instance)
             {
+                isStarted = true; // start the moment the UI Manager is awake (means the level is loaded)
                 LogSource.LogInfo("Attempting to add new text to canvas...");
                 // Generate stopwatch text object
                 Canvas canvas = __instance.stamina_obj.GetComponentInParent<Canvas>();
@@ -83,8 +92,8 @@ namespace CryptSpeedrun
             }
 
             [HarmonyPatch(typeof(ExitDoor), "OnTriggerEnter")]
-            [HarmonyPrefix]
-            public static void WinPrefix()
+            [HarmonyPostfix]
+            public static void WinPostfix()
             {
                 isStarted = false; // kill the timer, we've won
             }
