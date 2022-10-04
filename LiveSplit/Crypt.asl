@@ -2,9 +2,11 @@ state("Crypt") {}
 
 startup
 {
-    vars.Log = (Action<object>)((output) => print("[CryptSplit] " + output));
-    vars.Unity = Assembly.Load(File.ReadAllBytes(@"Components\UnityASL.bin")).CreateInstance("UnityASL.Unity");
-    vars.Unity.LoadSceneManager = true;
+    // This script uses asl-help from https://github.com/just-ero/asl-help
+    // Huge thanks to Ero and the Speedrun Tool Development Discord for helping me out
+    // and for putting up with my stupid questions.
+    Assembly.Load(File.ReadAllBytes(@"Components\asl-help")).CreateInstance("Unity");
+    vars.Helper.LoadSceneManager = true;
 
     // Timing method reminder from Amnesia TDD autosplitter
     if (timer.CurrentTimingMethod == TimingMethod.RealTime) {
@@ -24,25 +26,18 @@ startup
 
 init
 {
-    vars.Log("Detected Crypt.exe running...");
     // TODO: Setup tome collection as a split
-    vars.Unity.TryOnLoad = (Func<dynamic, bool>)(helper => {
-        var globals = helper.GetClass("Assembly-CSharp", "Globals");
-        vars.Unity.Make<int>(globals.Static, globals["phase"]).Name = "phase";
+    vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
+    {
+        vars.Helper["phase"] = mono.Make<int>("Globals", "phase");
+        vars.Helper["isPaused"] = mono.Make<int>("Globals", "isPaused");
         return true;
     });
-
-    vars.Unity.Load(game);
 }
 
 update
 {
-    if (!vars.Unity.Loaded) return false;
-
-    vars.Unity.Update();
-
-    current.scene = vars.Unity.Scenes.Active.Name;
-    current.phase = vars.Unity["phase"].Current;
+    current.scene = vars.Helper.Scenes.Active.Name;
 }
 
 start {
@@ -54,19 +49,11 @@ reset {
 }
 
 split {
-    if (current.phase == null) current.phase = old.phase;
-    if (current.scene == null) current.scene = old.scene;
-
     if (current.scene == "win" && current.scene != old.scene) return true;
     if (current.phase == old.phase + 1) return true;
 }
 
-exit
+isLoading
 {
-    vars.Unity.Reset();
-}
-
-shutdown
-{
-    vars.Unity.Reset();
+    return current.isPaused; // Stop the timer whenever the game is paused
 }
