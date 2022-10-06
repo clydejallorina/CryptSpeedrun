@@ -6,22 +6,10 @@ startup
     // Huge thanks to Ero and the Speedrun Tool Development Discord for helping me out
     // and for putting up with my stupid questions.
     Assembly.Load(File.ReadAllBytes(@"Components\asl-help")).CreateInstance("Unity");
+    vars.Helper.GameName = "Crypt";
     vars.Helper.LoadSceneManager = true;
 
-    // Timing method reminder from Amnesia TDD autosplitter
-    if (timer.CurrentTimingMethod == TimingMethod.RealTime) {
-        var timingMessage = MessageBox.Show(
-            "This game uses in-game time as the main timing method.\n" +
-            "LiveSplit is currently set to use Real Time.\n" +
-            "Would you like the timing method to be set to game time for you?",
-            "CryptSplit",
-            MessageBoxButtons.YesNo, MessageBoxIcon.Question
-        );
-
-        if (timingMessage == DialogResult.Yes) {
-            timer.CurrentTimingMethod = TimingMethod.GameTime;
-        }
-    }
+    vars.Helper.AlertGameTime();
 }
 
 init
