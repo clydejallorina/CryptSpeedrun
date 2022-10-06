@@ -9,6 +9,8 @@ startup
     vars.Helper.GameName = "Crypt";
     vars.Helper.LoadSceneManager = true;
 
+    settings.Add("splitOnPhase", true, "Split on Key Pickups");
+
     vars.Helper.AlertGameTime();
 }
 
@@ -18,7 +20,7 @@ init
     vars.Helper.TryLoad = (Func<dynamic, bool>)(mono =>
     {
         vars.Helper["phase"] = mono.Make<int>("Globals", "phase");
-        vars.Helper["isPaused"] = mono.Make<int>("Globals", "isPaused");
+        vars.Helper["isPaused"] = mono.Make<bool>("Globals", "isPaused");
         return true;
     });
 }
@@ -37,8 +39,8 @@ reset {
 }
 
 split {
-    if (current.scene == "win" && current.scene != old.scene) return true;
-    if (current.phase == old.phase + 1) return true;
+    if ((current.scene == "win") && (current.scene != old.scene)) return true;
+    if (settings["splitOnPhase"] && (current.phase == old.phase + 1)) return true;
 }
 
 isLoading
